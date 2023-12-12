@@ -27,6 +27,11 @@ pipeline {
                 echo "Building the app....."
             }
         }
+        stage("Push Image to DockerHub") {
+            steps {
+                echo "Push image....."
+            }
+        }
         stage("Test") {
             steps {
                 echo "Testing the app..."
