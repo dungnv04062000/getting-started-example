@@ -1,7 +1,6 @@
 def CredentialsId = "dockerDevopsID"
-def image = "getting-started-app"
-def artifactoryRegistry = 'http://ec2-13-213-66-189.ap-southeast-1.compute.amazonaws.com:9000'
-def version = "v1.2"
+def image = "dungnv46/getting-started"
+// def artifactoryRegistry = 'http://ec2-13-213-66-189.ap-southeast-1.compute.amazonaws.com:9000'
 
 pipeline {
     agent any
@@ -15,7 +14,7 @@ pipeline {
         stage("Build Image") {
             steps {
                 echo "Building the app....."
-                // sh "docker build -t $image:$version -f Dockerfile ."
+                // sh "docker build -t $image:$BUILD_NUMBER -f Dockerfile ."
             }
         }
         stage("Push Image to DockerHub") {
@@ -34,7 +33,7 @@ pipeline {
                 //     }
                 // }
                 withCredentials([usernamePassword(credentialsId: 'dockerDevopsID', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
-                                sh "docker login -u $USERNAME -p $PASSWORD $artifactoryRegistry"
+                                sh "docker login -u $USERNAME -p $PASSWORD docker.io"
                         }
                         echo "Login successfully....."
             }
@@ -49,14 +48,19 @@ pipeline {
                 echo "Deploying the app..."
                 // script {
                 //     try{
-                //         sh "docker run -it --name $image -p 9701:3000 -h $image-dev $image:$version"
-                //         echo "Deploying the app successfully with image $image:$version"
+                //         sh "docker run -it --name $image -p 9701:3000 -h $image-dev $image:$BUILD_NUMBER"
+                //         echo "Deploying the app successfully with image $image:$BUILD_NUMBER"
                 //     } catch(e){
                 //         echo "deloy image exception-" + e.toString()
                 //     }
                 // }
             }
         }
-    
+        stage("Remove image") {
+                steps {
+                    echo "Remove image ..."
+                    // sh "docker rmi $image:$BUILD_NUMBER"
+                }
+        }
         }
 }
