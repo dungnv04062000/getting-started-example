@@ -13,13 +13,13 @@ pipeline {
         }
         stage("Build Image") {
             steps {
-                echo "Building the app....."
-                // sh "docker build -t $image:$BUILD_NUMBER -f Dockerfile ."
+                echo "Building the app with image $image:v1.$BUILD_NUMBER....."
+                // sh "docker build -t $image:v1.$BUILD_NUMBER -f Dockerfile ."
             }
         }
         stage("Push Image to DockerHub") {
             steps {
-                echo "Push image....."
+                echo "Push image $image:v1.$BUILD_NUMBER....."
                 // script {
                 //     try{
                 //         // Login Artifactory
@@ -27,7 +27,8 @@ pipeline {
                 //                 sh "docker login -u $USERNAME -p $PASSWORD $artifactoryRegistry"
                 //         }
                 //         echo "Login successfully....."
-                //         //sh "docker push $artifactoryRegistry/$image-single:$BUILD_NUMBER"
+                //         //sh "docker tag $image-single:$BUILD_NUMBER"
+                //         //sh "docker push $image-single:v1.$BUILD_NUMBER"
                 //     } catch(e){
                 //         echo "push image exception-" + e.toString()
                 //     }
@@ -36,19 +37,15 @@ pipeline {
                                 sh "docker login -u $USERNAME -p $PASSWORD docker.io"
                         }
                         echo "Login successfully....."
-            }
-        }
-        stage("Test") {
-            steps {
-                echo "Testing the app..."
+                        //sh "docker push $image-single:v1.$BUILD_NUMBER"
             }
         }
         stage("Deploy") {
             steps {
-                echo "Deploying the app..."
+                echo "Deploying the app with image $image:v1.$BUILD_NUMBER..."
                 // script {
                 //     try{
-                //         sh "docker run -it --name $image -p 9701:3000 -h $image-dev $image:$BUILD_NUMBER"
+                //         sh "docker run -it --name $image -p 9701:3000 -h $image-dev $image:v1.$BUILD_NUMBER"
                 //         echo "Deploying the app successfully with image $image:$BUILD_NUMBER"
                 //     } catch(e){
                 //         echo "deloy image exception-" + e.toString()
@@ -58,8 +55,8 @@ pipeline {
         }
         stage("Remove image") {
                 steps {
-                    echo "Remove image ..."
-                    // sh "docker rmi $image:$BUILD_NUMBER"
+                    echo "Remove image $image:v1.$BUILD_NUMBER ..."
+                    // sh "docker rmi $image:v1.$BUILD_NUMBER"
                 }
         }
         }
