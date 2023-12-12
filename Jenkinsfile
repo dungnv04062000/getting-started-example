@@ -21,15 +21,17 @@ pipeline {
         stage("Push Image to DockerHub") {
             steps {
                 echo "Push image....."
-                try{
-                    // Login Artifactory
-                    withCredentials([usernamePassword(credentialsId: 'dockerDevopsID', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
-                            sh "docker login -u $USERNAME -p $PASSWORD $artifactoryRegistry"
+                script {
+                    try{
+                        // Login Artifactory
+                        withCredentials([usernamePassword(credentialsId: 'dockerDevopsID', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+                                sh "docker login -u $USERNAME -p $PASSWORD $artifactoryRegistry"
+                        }
+                        echo "Login successfully....."
+                        //sh "docker push $artifactoryRegistry/$image-single:$BUILD_NUMBER"
+                    } catch(e){
+                        echo "push image exception-" + e.toString()
                     }
-                    echo "Login successfully....."
-                    //sh "docker push $artifactoryRegistry/$image-single:$BUILD_NUMBER"
-                } catch(e){
-                    echo "push image exception-" + e.toString()
                 }
             }
         }
@@ -41,11 +43,13 @@ pipeline {
         stage("Deploy") {
             steps {
                 echo "Deploying the app..."
-                try{
-                    sh "docker run -it --name $image -p 9701:3000 -h $image-dev $image:$version"
-                    echo "Deploying the app successfully with image $image:$version"
-                } catch(e){
-                    echo "deloy image exception-" + e.toString()
+                script {
+                    try{
+                        sh "docker run -it --name $image -p 9701:3000 -h $image-dev $image:$version"
+                        echo "Deploying the app successfully with image $image:$version"
+                    } catch(e){
+                        echo "deloy image exception-" + e.toString()
+                    }
                 }
             }
         }
