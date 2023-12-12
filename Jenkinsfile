@@ -15,24 +15,28 @@ pipeline {
         stage("Build Image") {
             steps {
                 echo "Building the app....."
-                sh "docker build -t $image:$version -f Dockerfile ."
+                // sh "docker build -t $image:$version -f Dockerfile ."
             }
         }
         stage("Push Image to DockerHub") {
             steps {
                 echo "Push image....."
-                script {
-                    try{
-                        // Login Artifactory
-                        withCredentials([usernamePassword(credentialsId: 'dockerDevopsID', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+                // script {
+                //     try{
+                //         // Login Artifactory
+                //         withCredentials([usernamePassword(credentialsId: 'dockerDevopsID', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+                //                 sh "docker login -u $USERNAME -p $PASSWORD $artifactoryRegistry"
+                //         }
+                //         echo "Login successfully....."
+                //         //sh "docker push $artifactoryRegistry/$image-single:$BUILD_NUMBER"
+                //     } catch(e){
+                //         echo "push image exception-" + e.toString()
+                //     }
+                // }
+                withCredentials([usernamePassword(credentialsId: 'dockerDevopsID', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                                 sh "docker login -u $USERNAME -p $PASSWORD $artifactoryRegistry"
                         }
                         echo "Login successfully....."
-                        //sh "docker push $artifactoryRegistry/$image-single:$BUILD_NUMBER"
-                    } catch(e){
-                        echo "push image exception-" + e.toString()
-                    }
-                }
             }
         }
         stage("Test") {
@@ -43,14 +47,14 @@ pipeline {
         stage("Deploy") {
             steps {
                 echo "Deploying the app..."
-                script {
-                    try{
-                        sh "docker run -it --name $image -p 9701:3000 -h $image-dev $image:$version"
-                        echo "Deploying the app successfully with image $image:$version"
-                    } catch(e){
-                        echo "deloy image exception-" + e.toString()
-                    }
-                }
+                // script {
+                //     try{
+                //         sh "docker run -it --name $image -p 9701:3000 -h $image-dev $image:$version"
+                //         echo "Deploying the app successfully with image $image:$version"
+                //     } catch(e){
+                //         echo "deloy image exception-" + e.toString()
+                //     }
+                // }
             }
         }
     
