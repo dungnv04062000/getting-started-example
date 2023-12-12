@@ -16,6 +16,12 @@
 pipeline {
     agent any
     stages {
+        stage('Checkout') {
+            steps {
+                // This step checks out your source code
+                checkout scm
+            }
+        }
         stage("Build") {
             steps {
                 echo "Building the app..."
