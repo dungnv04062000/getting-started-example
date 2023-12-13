@@ -1,5 +1,6 @@
 def CredentialsId = "dockerDevopsID"
-def image = "dungnv46/getting-started"
+def container = "getting-started"
+def image = "dungnv46/"
 // def artifactoryRegistry = 'http://ec2-13-213-66-189.ap-southeast-1.compute.amazonaws.com:9000'
 
 pipeline {
@@ -13,13 +14,13 @@ pipeline {
         }
         stage("Build Image") {
             steps {
-                echo "Building the app with image $image:v1.$BUILD_NUMBER....."
-                sh "docker build -t $image:v1.$BUILD_NUMBER -f Dockerfile ."
+                echo "Building the app with image $image$container:v1.$BUILD_NUMBER....."
+                sh "docker build -t $image$container:v1.$BUILD_NUMBER -f Dockerfile ."
             }
         }
         stage("Push Image to DockerHub") {
             steps {
-                echo "Push image $image:v1.$BUILD_NUMBER....."
+                echo "Push image $image$container:v1.$BUILD_NUMBER....."
                 // script {
                 //     try{
                 //         // Login Artifactory
@@ -42,8 +43,11 @@ pipeline {
         }
         stage("Deploy") {
             steps {
-                echo "Deploying the app with image $image:v1.$BUILD_NUMBER..."
-                sh "docker run -it --name $image -p 9701:3000 -h $image-dev $image:v1.$BUILD_NUMBER"
+                echo "Stop & Remove current container"
+                sh "docker container stop $container"
+                sh "docker container rm $container"
+                echo "Deploying the app with image $image$container:v1.$BUILD_NUMBER..."
+                sh "docker run -it --name $container -p 9701:3000 -h $image-dev $image:v1.$BUILD_NUMBER"
                 // script {
                 //     try{
                 //         sh "docker run -it --name $image -p 9701:3000 -h $image-dev $image:v1.$BUILD_NUMBER"
