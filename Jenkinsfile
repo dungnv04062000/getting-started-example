@@ -47,7 +47,7 @@ pipeline {
                 sh "docker container stop $container"
                 sh "docker container rm $container"
                 echo "Deploying the app with image $image$container:v1.$BUILD_NUMBER..."
-                sh "docker run -it --name $container -p 9701:3000 -h $image-dev $image:v1.$BUILD_NUMBER"
+                sh "docker run -it --name $container -p 9701:3000 -h $image$container-dev $image$container:v1.$BUILD_NUMBER"
                 // script {
                 //     try{
                 //         sh "docker run -it --name $image -p 9701:3000 -h $image-dev $image:v1.$BUILD_NUMBER"
@@ -60,7 +60,7 @@ pipeline {
         }
         stage("Remove image") {
                 steps {
-                    echo "Remove image $image:v1.$BUILD_NUMBER ..."
+                    echo "Remove image $image$container:v1.$BUILD_NUMBER ..."
                     // sh "docker rmi $image:v1.$BUILD_NUMBER"
                     sh "docker system prune -- volumes"
                     sh "y"
