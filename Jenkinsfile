@@ -61,7 +61,7 @@ pipeline {
         stage("Remove image") {
                 steps {
                     echo "Remove image $image$container:v1.$BUILD_NUMBER ..."
-                    sh "docker rmi $image$container:v1.$BUILD_NUMBER"
+                    // sh "docker rmi $image$container:v1.$BUILD_NUMBER"
                     // sh "docker system prune -- volumes"
                     // sh "y"
                 }
