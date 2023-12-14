@@ -17,8 +17,15 @@ app.delete('/items/:id', deleteItem);
 db.init().then(() => {
     const server = app.listen(3000, () => {
         console.log('Listening on port 3000');
-        // Keep the application running
-        process.stdin.resume();
+        const gracefulShutdown = () => {
+            db.teardown()
+                .catch(() => {})
+                .then(() => process.exit(0));
+        };
+        
+        process.on('SIGINT', gracefulShutdown);
+        process.on('SIGTERM', gracefulShutdown);
+        process.on('SIGUSR2', gracefulShutdown);
       });
 }).catch((err) => {
     console.error(err);
@@ -26,13 +33,4 @@ db.init().then(() => {
 });
 
 // db.init();
-
-const gracefulShutdown = () => {
-    db.teardown()
-        .catch(() => {})
-        .then(() => process.exit(0));
-};
-
-process.on('SIGINT', gracefulShutdown);
-process.on('SIGTERM', gracefulShutdown);
-process.on('SIGUSR2', gracefulShutdown); // Sent by nodemon
+ // Sent by nodemon
