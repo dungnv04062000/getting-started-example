@@ -17,10 +17,9 @@ app.delete('/items/:id', deleteItem);
 db.init().then(() => {
     const server = app.listen(3000, () => {
         console.log('Listening on port 3000');
+        // Keep the application running
+        process.stdin.resume();
       });
-      
-      // Keep the application running
-      process.stdin.resume();
 }).catch((err) => {
     console.error(err);
     process.exit(1);
