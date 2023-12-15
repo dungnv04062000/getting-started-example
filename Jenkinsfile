@@ -47,7 +47,7 @@ pipeline {
                 sh "docker container stop $container"
                 sh "docker container rm $container"
                 echo "Deploying the app with image $image$container:v1.$BUILD_NUMBER..."
-                timeout(20) {
+                timeout(time: 20, unit: 'SECONDS')  {
                     sh "docker run --name $container -p 9701:3000 -h $image$container-dev $image$container:v1.$BUILD_NUMBER"
                 }
 
